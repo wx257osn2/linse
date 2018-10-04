@@ -157,12 +157,6 @@ private:
 static inline void strncpy(char* dest, const char* src, std::size_t count){
   ::strncpy_s(dest, count, src, _TRUNCATE);
 }
-static inline FILE* fopen(const char* f, const char* type){
-  FILE* fp;
-  if(::fopen_s(&fp, f, type))
-    return nullptr;
-  return fp;
-}
 static inline FILE* fopen(const wchar_t* f, const wchar_t* type){
   FILE* fp;
   if(::_wfopen_s(&fp, f, type))
