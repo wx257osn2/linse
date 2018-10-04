@@ -43,7 +43,7 @@ int main (int argc, char** argv) {
   while (1) {
     auto result = ls(prompt);
 
-    if (!result || (*result)[0] == '\0') {
+    if (!result || result->empty()) {
       break;
     } else if (!strncmp(result->data(), "/history", 8)) {
       /* Display the current history. */
