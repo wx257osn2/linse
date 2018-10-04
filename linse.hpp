@@ -1422,7 +1422,6 @@ class rawmode{
       else{
         DWORD _;
         if(!::GetConsoleMode(console_out, &_)){
-          ::CloseHandle(console_out);
           console_out = nullptr;
           errno = ENOTTY;
           return false;
@@ -1430,7 +1429,6 @@ class rawmode{
       }
       console_in = ::GetStdHandle(STD_INPUT_HANDLE);
       if(console_in == INVALID_HANDLE_VALUE){
-        ::CloseHandle(console_out);
         console_out = nullptr;
         console_in = nullptr;
         errno = ENOTTY;
@@ -1484,9 +1482,7 @@ class rawmode{
     if(oldMode){
       ::SetConsoleMode(console_in, oldMode);
       oldMode = 0;
-      ::CloseHandle(console_out);
       console_out = nullptr;
-      ::CloseHandle(console_in);
       console_in = nullptr;
     }
 #else
