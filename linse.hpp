@@ -108,7 +108,7 @@
 #if defined(_MSC_VER) && _MSC_VER < 1900
 #define snprintf _snprintf
 #endif
-#if !defined GNUC
+#if !(defined __GNUC__)
 #define strcasecmp _stricmp
 #endif
 #define isatty _isatty
@@ -121,8 +121,6 @@
 #include <signal.h>
 #include <termios.h>
 #include <unistd.h>
-#include <cstdlib>
-#include <cstring>
 #include <sys/types.h>
 #include <sys/ioctl.h>
 #include <cctype>
@@ -132,6 +130,8 @@
 
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <errno.h>
 #include <fcntl.h>
 
@@ -154,6 +154,11 @@
 struct linse{
 private:
 #ifdef _WIN32
+#ifdef __GNUC__
+static inline FILE* fopen(const wchar_t* f, const wchar_t* type){
+  return ::_wfopen(f, type);
+}
+#else
 static inline void strncpy(char* dest, const char* src, std::size_t count){
   ::strncpy_s(dest, count, src, _TRUNCATE);
 }
@@ -163,6 +168,7 @@ static inline FILE* fopen(const wchar_t* f, const wchar_t* type){
     return nullptr;
   return fp;
 }
+#endif
 #endif
 
 using UTF32 = char32_t;
@@ -1605,7 +1611,7 @@ static constexpr char32_t PAGE_UP_KEY     = 0x11000000;
 static constexpr char32_t PAGE_DOWN_KEY   = 0x11200000;
 
 static inline std::string get_environment(const char* varname){
-#ifdef _WIN32
+#if defined _WIN32 && !(defined __GNUC__)
   char* env_p;
   std::size_t len;
   if(::_dupenv_s(&env_p, &len, varname) != 0 || env_p == nullptr)
