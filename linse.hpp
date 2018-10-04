@@ -159,7 +159,13 @@ static inline void strncpy(char* dest, const char* src, std::size_t count){
 }
 static inline FILE* fopen(const char* f, const char* type){
   FILE* fp;
-  if(fopen_s(&fp, f, type))
+  if(::fopen_s(&fp, f, type))
+    return nullptr;
+  return fp;
+};
+static inline FILE* fopen(const wchar_t* f, const wchar_t* type){
+  FILE* fp;
+  if(::_wfopen_s(&fp, f, type))
     return nullptr;
   return fp;
 };
@@ -1777,7 +1783,7 @@ class hist : std::vector<std::string>{
    * otherwise false is returned. */
   bool save(const std::filesystem::path& filename)const{
 #ifdef _WIN32
-    FILE* fp = fopen(filename.c_str(), "wt");
+    FILE* fp = fopen(filename.c_str(), L"wt");
 #else
     int fd = open(filename.c_str(), O_CREAT | O_TRUNC | O_WRONLY, S_IWUSR | S_IRUSR);
     if(fd < 0)
