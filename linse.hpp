@@ -162,13 +162,13 @@ static inline FILE* fopen(const char* f, const char* type){
   if(::fopen_s(&fp, f, type))
     return nullptr;
   return fp;
-};
+}
 static inline FILE* fopen(const wchar_t* f, const wchar_t* type){
   FILE* fp;
   if(::_wfopen_s(&fp, f, type))
     return nullptr;
   return fp;
-};
+}
 #endif
 
 using UTF32 = char32_t;
