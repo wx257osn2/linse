@@ -2124,8 +2124,7 @@ class InputBuffer{
                 else if(c == '3' || c == '5'){
                   thisKeyMetaCtrl |= (c == '3' ? META : CTRL);
                   switch(readUnicodeCharacter()){
-                  case 0:
-                    return 0;
+                  case 0: return 0;
                   case 'A': return upArrowKeyRoutine();
                   case 'B': return downArrowKeyRoutine();
                   case 'C': return rightArrowKeyRoutine();
