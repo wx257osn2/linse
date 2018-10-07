@@ -2336,11 +2336,11 @@ class InputBuffer{
           bool found = false;
           int historySearchIndex = history.index;
           std::size_t lineLength = activeHistoryLine.size();
-          std::size_t lineSearchPos = historyLinePosition;
+          std::make_signed_t<std::size_t> lineSearchPos = static_cast<std::make_signed_t<std::size_t>>(historyLinePosition);
           if(std::exchange(searchAgain, false))
             lineSearchPos += dp.direction;
           while(true){
-            while((dp.direction > 0) ? (lineSearchPos < lineLength)
+            while((dp.direction > 0) ? (lineSearchPos < static_cast<std::make_signed_t<std::size_t>>(lineLength))
                                      : (lineSearchPos >= 0)){
               if(strncmp(dp.searchText.data(),
                            &activeHistoryLine[lineSearchPos],
