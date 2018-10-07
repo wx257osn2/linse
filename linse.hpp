@@ -2674,7 +2674,7 @@ class InputBuffer{
   }
 
   template<bool enhancedDisplay>
-  static std::uint16_t setDisplayAttribute([[maybe_unused]] rawmode& rm, std::uint16_t oldDisplayAttribute = 0u){
+  static std::uint16_t setDisplayAttribute([[maybe_unused]] rawmode& rm, [[maybe_unused]] std::uint16_t oldDisplayAttribute = 0u){
 #ifdef _WIN32
     if constexpr(enhancedDisplay){
       ::CONSOLE_SCREEN_BUFFER_INFO inf;
