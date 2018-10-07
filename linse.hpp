@@ -438,8 +438,8 @@ static constexpr bool isLegalUTF8(const UTF8 *source, int length)noexcept{
    switch (length){
    default: return false;
     /* Everything else falls through when "true"... */
-   case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
-   case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false;
+   case 4: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; [[fallthrough]];
+   case 3: if ((a = (*--srcptr)) < 0x80 || a > 0xBF) return false; [[fallthrough]];
    case 2: if ((a = (*--srcptr)) > 0xBF) return false;
 
      switch (*source){
@@ -450,6 +450,7 @@ static constexpr bool isLegalUTF8(const UTF8 *source, int length)noexcept{
        case 0xF4: if(a > 0x8F) return false; break;
        default:   if(a < 0x80) return false;
      }
+     [[fallthrough]];
 
    case 1: if(*source >= 0x80 && *source < 0xC2) return false;
    }
@@ -590,9 +591,9 @@ static constexpr std::tuple<conversion_result, const UTF32*, UTF8*> ConvertUTF32
       break;
     }
     switch (bytesToWrite){ /* note: everything falls through. */
-      case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
-      case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
-      case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6;
+      case 4: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6; [[fallthrough]];
+      case 3: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6; [[fallthrough]];
+      case 2: *--target = (UTF8)((ch | byteMark) & byteMask); ch >>= 6; [[fallthrough]];
       case 1: *--target = (UTF8) (ch | firstByteMark[bytesToWrite]);
     }
     target += bytesToWrite;
@@ -625,11 +626,11 @@ static constexpr std::tuple<conversion_result, const UTF8*, UTF32*> ConvertUTF8t
      * The cases all fall through. See "Note A" below.
      */
     switch (extraBytesToRead) {
-      case 5: ch += *source++; ch <<= 6;
-      case 4: ch += *source++; ch <<= 6;
-      case 3: ch += *source++; ch <<= 6;
-      case 2: ch += *source++; ch <<= 6;
-      case 1: ch += *source++; ch <<= 6;
+      case 5: ch += *source++; ch <<= 6; [[fallthrough]];
+      case 4: ch += *source++; ch <<= 6; [[fallthrough]];
+      case 3: ch += *source++; ch <<= 6; [[fallthrough]];
+      case 2: ch += *source++; ch <<= 6; [[fallthrough]];
+      case 1: ch += *source++; ch <<= 6; [[fallthrough]];
       case 0: ch += *source++;
     }
     ch -= offsetsFromUTF8[extraBytesToRead];
@@ -2133,6 +2134,7 @@ class InputBuffer{
                 }
               }
             }
+            [[fallthrough]];
             case '0': //escLeftBracket0Routine
             case '2': //escLeftBracket2Routine
             case '9': //escLeftBracket9Routine
