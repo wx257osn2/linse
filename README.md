@@ -4,8 +4,8 @@ Linse is a header-only readline library for C++17.
 
 ## Origin
 
-Linse is a forked project of [arangodb/linenoise-ng](https://github.com/arangodb/linenoise-ng).
-Linenoise Next Generation is based on [antirez/linenoise](https://github.com/antirez/linenoise).
+Linse is a forked project of Linenoise Next Generation(linenoise-ng, [arangodb/linenoise-ng](https://github.com/arangodb/linenoise-ng)).  
+linenoise-ng is based on [antirez/linenoise](https://github.com/antirez/linenoise).
 
 ## Features
 
