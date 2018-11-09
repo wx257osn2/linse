@@ -2465,7 +2465,7 @@ class InputBuffer{
       {
         std::vector<char32_t> remain(buf32.begin()+pos, buf32.begin() + pos + (displayLength - (startIndex+longestCommonPrefix)));
         buf32.resize(startIndex);
-        buf32.insert(buf32.end(), lc.completionStrings[0].cbegin(), lc.completionStrings[0].cend());
+        buf32.insert(buf32.end(), lc.completionStrings[0].cbegin(), lc.completionStrings[0].cbegin()+longestCommonPrefix);
         buf32.insert(buf32.end(), remain.begin(), remain.end());
       }
       pos = startIndex + longestCommonPrefix;
@@ -2493,7 +2493,7 @@ class InputBuffer{
       std::fflush(stdout);
       onNewLine = true;
       while(c != 'y' && c != 'Y' && c != 'n' && c != 'N' && c != ctrlChar('C'))
-        read_char_and_cleanup_ctrl(rm);
+        c = read_char_and_cleanup_ctrl(rm);
       switch(c){
         case 'n':
         case 'N':
@@ -2530,7 +2530,7 @@ class InputBuffer{
         if(row == pauseRow){
           printf("\n--More--");
           fflush(stdout);
-          read_char_and_cleanup_ctrl(rm);
+          c = read_char_and_cleanup_ctrl(rm);
           while(c != ' ' && c != '\r' && c != '\n' && c != 'y' && c != 'Y' &&
               c != 'n' && c != 'N' && c != 'q' && c != 'Q' &&
               c != ctrlChar('C')) {
