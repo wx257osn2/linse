@@ -1651,7 +1651,7 @@ static void beep(){
  * @param c character to clean up
  * @return cleaned-up character
  */
-static constexpr char32_t cleanupCtrl(char32_t c)noexcept{
+[[nodiscard]] static constexpr char32_t cleanupCtrl(char32_t c)noexcept{
   if(c & CTRL){
     const int d = c & 0x1FF;
     if(d >= 'a' && d <= 'z')
@@ -2409,7 +2409,7 @@ class InputBuffer{
     refreshLine(pi, ln);
     pos = backup;
   }
-  int read_char_and_cleanup_ctrl(rawmode& rm){
+  [[nodiscard]] int read_char_and_cleanup_ctrl(rawmode& rm){
     char32_t c;
     do{
       c = cleanupCtrl(linenoiseReadChar(rm));
