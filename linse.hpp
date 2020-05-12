@@ -969,9 +969,9 @@ static constexpr std::size_t strlen(const T* str)noexcept{
   return static_cast<std::size_t>(ptr - str);
 }
 
-static constexpr std::pair<conversion_result, std::size_t> copyString8to32(char32_t* dst, std::size_t dstSize, const UTF8* src)noexcept{
+static constexpr std::pair<conversion_result, std::size_t> copyString8to32(char32_t* dst, std::size_t dstSize, const UTF8* src, std::size_t srcSize)noexcept{
   const auto sourceStart = src;
-  const auto sourceEnd = sourceStart + strlen(src);
+  const auto sourceEnd = sourceStart + srcSize;
   const auto targetStart = dst;
   const auto targetEnd = targetStart + dstSize;
 
@@ -981,6 +981,14 @@ static constexpr std::pair<conversion_result, std::size_t> copyString8to32(char3
     return std::make_pair(res, std::size_t{0});
 
   return std::make_pair(res, static_cast<std::size_t>(target_end - targetStart));
+}
+
+static std::pair<conversion_result, std::size_t> copyString8to32(char32_t* dst, std::size_t dstSize, const char* src, std::size_t srcSize)noexcept{
+  return copyString8to32(dst, dstSize, reinterpret_cast<const UTF8*>(src), srcSize);
+}
+
+constexpr static std::pair<conversion_result, std::size_t> copyString8to32(char32_t* dst, std::size_t dstSize, const UTF8* src)noexcept{
+  return copyString8to32(dst, dstSize, src, strlen(src));
 }
 
 static std::pair<conversion_result, std::size_t> copyString8to32(char32_t* dst, std::size_t dstSize, const char* src)noexcept{
@@ -1194,7 +1202,7 @@ inline int write32(int fd, const char32_t* text32, std::size_t len32){
 struct Utf32String{
   static std::u32string convert(const std::string_view& src){
     std::u32string _data(src.size()+1, 0);
-    auto ret = copyString8to32(_data.data(), _data.size(), src.data());
+    auto ret = copyString8to32(_data.data(), _data.size(), src.data(), src.size());
     if(ret.first == conversion_result::succeeded)
       _data.resize(ret.second);
     return _data;
@@ -1968,7 +1976,7 @@ class InputBuffer{
             string[count++] = c;
             string[count] = 0;
             char32_t unicode_char[2];
-            const auto  res = copyString8to32(unicode_char, 2, string);
+            const auto  res = copyString8to32(unicode_char, 2, string, count);
             if(std::get<0>(res) == conversion_result::succeeded && std::get<1>(res) != 0){
               count = 0;
               return unicode_char[0];
@@ -2301,7 +2309,7 @@ class InputBuffer{
           {
             const std::size_t bufferSize = historyLineLength + 1;
             auto tempUnicode = std::make_unique<char32_t[]>(bufferSize);
-            copyString8to32(tempUnicode.get(), bufferSize, history[history.index].data());
+            copyString8to32(tempUnicode.get(), bufferSize, history[history.index].data(), history[history.index].size());
             dynamicRefresh(dp, tempUnicode.get(), historyLineLength, historyLinePosition, ln);
           }
           continue;
@@ -2910,7 +2918,7 @@ class InputBuffer{
     // The latest history entry is always our current buffer
     if(buf32.size() > 0){
       std::vector<char> tempBuffer(sizeof(char32_t) * buf32.size() + 1);
-      copyString32to8(reinterpret_cast<UTF8*>(tempBuffer.data()), tempBuffer.size(), buf32.data());
+      copyString32to8(reinterpret_cast<UTF8*>(tempBuffer.data()), tempBuffer.size(), buf32.data(), buf32.size());
       history.add(tempBuffer.data());
     }
     else
