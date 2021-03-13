@@ -110,11 +110,11 @@
 #endif
 #if !(defined __GNUC__)
 #define strcasecmp _stricmp
+#define STDIN_FILENO (_fileno(stdin))
+#define STDOUT_FILENO (_fileno(stdout))
 #endif
 #define isatty _isatty
 #define write _write
-#define STDIN_FILENO (_fileno(stdin))
-#define STDOUT_FILENO (_fileno(stdout))
 
 #else /* _WIN32 */
 
